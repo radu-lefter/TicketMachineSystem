@@ -58,6 +58,7 @@ public class DAOFactoryJPAImpl implements DAOFactory {
     // NOT USED IN STATION CONTROLLER
     @Override
     public PriceCalculatorDAO getPriceCalculatorDAO() {
+     
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

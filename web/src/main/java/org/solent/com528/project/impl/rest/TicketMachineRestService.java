@@ -97,10 +97,12 @@ public class TicketMachineRestService {
             //String stationName = "Waterloo";
             //Integer stationZone = 1;
 
-            // YOU WOULD GET THIS FROM THE DAO'S IN THE SERVICE FACADE            
+            // YOU WOULD GET THIS FROM THE DAO'S IN THE SERVICE FACADE   
+            
             PricingDetails pricingDetails = new PricingDetails();
             pricingDetails.setOffpeakPricePerZone(2.50);
             pricingDetails.setPeakPricePerZone(5.00);
+            
             List<PriceBand> priceBandList = new ArrayList();
             pricingDetails.setPriceBandList(priceBandList);
 
@@ -143,19 +145,23 @@ public class TicketMachineRestService {
 
             // 200 CODE
             replyMessage.setCode(Response.Status.OK.getStatusCode());
-
-            //replyMessage.setCode(Response.Status.OK.getStatusCode());
-            //replyMessage.setDebugMessage("this is a dummy implemetation for testing");
+            
+            
             TicketMachineConfig ticketMachineConfig = new TicketMachineConfig();
 
             ticketMachineConfig.setPricingDetails(pricingDetails);
 
-            //ticketMachineConfig.setStationList(stationList);
 
             ticketMachineConfig.setStationName(stationName);
             ticketMachineConfig.setUuid(uuid);
 
             ticketMachineConfig.setStationZone(stationZone);
+            
+            
+
+            
+            
+            //TicketMachineConfig ticketMachineConfig = serviceFacade.getTicketMachineConfig(uuid);
 
             replyMessage.setTicketMachineConfig(ticketMachineConfig);
 

@@ -20,9 +20,12 @@ import javax.servlet.annotation.WebListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.solent.com528.project.impl.dao.jaxb.PriceCalculatorDAOJaxbImpl;
 import org.solent.com528.project.impl.dao.jaxb.StationDAOJaxbImpl;
 import org.solent.com528.project.impl.service.ServiceObjectFactoryJpaImpl;
+import org.solent.com528.project.model.dao.PriceCalculatorDAO;
 import org.solent.com528.project.model.dao.StationDAO;
+import org.solent.com528.project.model.dto.PricingDetails;
 import org.solent.com528.project.model.dto.Station;
 import org.solent.com528.project.model.service.ServiceFacade;
 import org.solent.com528.project.model.service.ServiceObjectFactory;
@@ -67,7 +70,7 @@ public class WebObjectFactory implements ServletContextListener {
                     if (stationDAO.findAll().isEmpty()) {
                         List<Station> stationList = loadDefaultStations();
                         stationDAO.saveAll(stationList);
-                    }
+                    }               
                 }
             }
         }
@@ -93,7 +96,28 @@ public class WebObjectFactory implements ServletContextListener {
 
         return defaultStationList;
     }
+   
+    /*
+    private static PricingDetails loadPricingDetails() {
+        LOG.debug("LOADING DEFAULT prices");
+        PricingDetails prdet = new PricingDetails();
+        try {
+            
+            URL res = WebObjectFactory.class.getClassLoader().getResource("pricingDetails.xml");
+            String fileName = res.getPath();
+            LOG.debug("loading from priocing details fileName:   " + fileName);
+            PriceCalculatorDAOJaxbImpl priceCalculatorDAOJaxb = new PriceCalculatorDAOJaxbImpl(fileName);
+            prdet = priceCalculatorDAOJaxb.getPricingDetails();
 
+        } catch (Exception ex) {
+            LOG.error("cannot load default stations", ex);
+        }
+
+        return prdet;
+    }
+
+    */
+   
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         LOG.debug("WEB OBJECT FACTORY context initialised");
