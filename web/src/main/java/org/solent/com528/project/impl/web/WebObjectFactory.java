@@ -73,6 +73,8 @@ public class WebObjectFactory implements ServletContextListener {
         }
         return serviceFacade;
     }
+    
+    
 
     private static List<Station> loadDefaultStations() {
         LOG.debug("LOADING DEFAULT STATIONS");

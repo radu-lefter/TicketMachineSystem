@@ -11,6 +11,7 @@ package org.solent.com528.project.impl.rest;
  */
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,6 +35,9 @@ import org.solent.com528.project.model.dto.Station;
 import org.solent.com528.project.model.dto.TicketMachineConfig;
 import org.solent.com528.project.model.service.ServiceFacade;
 
+import org.solent.com528.project.model.dao.TicketMachineDAO;
+import org.solent.com528.project.model.dto.TicketMachine;
+
 /**
  * To make the ReST interface easier to program. All of the replies are contained in ReplyMessage classes but only the fields indicated are populated with each
  * reply. All replies will contain a code and a debug message.
@@ -44,6 +48,9 @@ public class TicketMachineRestService {
     // SETS UP LOGGING 
     // note that log name will be org.solent.com528.factoryandfacade.impl.rest.TicketMachineRestService
     final static Logger LOG = LogManager.getLogger(TicketMachineRestService.class);
+    
+    private ServiceFacade serviceFacade = WebObjectFactory.getServiceFacade();
+    private TicketMachineDAO ticketMachineDAO = serviceFacade.getTicketMachineDAO();
 
     /**
      * this is a very simple rest test message which only returns a string
@@ -82,8 +89,13 @@ public class TicketMachineRestService {
                 throw new IllegalArgumentException("uuid query must be defined ?uuid=xxx");
             }
             // get this from local properties
-            String stationName = "Waterloo";
-            Integer stationZone = 1;
+            TicketMachine ticketMachine = ticketMachineDAO.findByUuid(uuid);
+            Station station = ticketMachine.getStation();
+            String stationName = station.getName();
+            Integer stationZone = station.getZone();
+            Long stationId = station.getId();
+            //String stationName = "Waterloo";
+            //Integer stationZone = 1;
 
             // YOU WOULD GET THIS FROM THE DAO'S IN THE SERVICE FACADE            
             PricingDetails pricingDetails = new PricingDetails();
@@ -113,7 +125,7 @@ public class TicketMachineRestService {
 
             // STATION LIST
             
-            List<Station> stationList = stationDAO.findAll();
+            //List<Station> stationList = stationDAO.findAll();
             
 //            List<Station> stationList = new ArrayList();
 //            Station station = new Station();
@@ -132,13 +144,13 @@ public class TicketMachineRestService {
             // 200 CODE
             replyMessage.setCode(Response.Status.OK.getStatusCode());
 
-            replyMessage.setCode(Response.Status.OK.getStatusCode());
-            replyMessage.setDebugMessage("this is a dummy implemetation for testing");
+            //replyMessage.setCode(Response.Status.OK.getStatusCode());
+            //replyMessage.setDebugMessage("this is a dummy implemetation for testing");
             TicketMachineConfig ticketMachineConfig = new TicketMachineConfig();
 
             ticketMachineConfig.setPricingDetails(pricingDetails);
 
-            ticketMachineConfig.setStationList(stationList);
+            //ticketMachineConfig.setStationList(stationList);
 
             ticketMachineConfig.setStationName(stationName);
             ticketMachineConfig.setUuid(uuid);
@@ -157,5 +169,132 @@ public class TicketMachineRestService {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(replyMessage).build();
         }
     }
+    
+   /**
+     * getMachineByStationName
+     *
+     * http://localhost:8080/projectfacadeweb/rest/stationService/getMachineByStationName?name=xyz
+     * http://localhost:8080/projectfacadeweb/rest/stationService/getMachineByStationName?name=West%Finchley
+     * 
+     *
+     * @return list of all machines in List<TicketMachine> replyMessage.getTicketMachineList()
+     */ 
+    
+    @GET
+    @Path("/getMachineByStationName")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getMachineByStationName(@QueryParam("name") String name) {
+        ReplyMessage replyMessage = new ReplyMessage();
+        LOG.debug("/getMachineByStationName called  name=" + name);
+        List<TicketMachine> machines = ticketMachineDAO.findByStationName(name);
+        LOG.debug("/getMachineByStationName called  machines size=" + machines.size());
+        //create dummy stations if empty
+        if(machines.isEmpty()){
+            //generate ticket machines
+            machines = ticketMachineDAO.findAll();
+        }
+        
+        replyMessage.setCode(Response.Status.OK.getStatusCode());
+        replyMessage.setTicketMachineList(machines);
+        return Response.status(Response.Status.OK).entity(replyMessage).build();
+    }
+    
+    /**
+     * getAllTicketMachines
+     *
+     * http://localhost:8080/projectfacadeweb/rest/stationService/getAllTicketMachines
+    
+     *
+     * @return list of all machines in List<TicketMachine> replyMessage.getTicketMachineList()
+     */ 
+    
+    @GET
+    @Path("/getAllTicketMachines")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getAllTicketMachines() {
+        ReplyMessage replyMessage = new ReplyMessage();
+        //LOG.debug("/getMachineByStationName called  name=" + name);
+        List<TicketMachine> machines = ticketMachineDAO.findAll();
+        //LOG.debug("/getMachineByStationName called  machines size=" + machines.size());
+        //create dummy stations if empty
+        
+        replyMessage.setCode(Response.Status.OK.getStatusCode());
+        replyMessage.setTicketMachineList(machines);
+        return Response.status(Response.Status.OK).entity(replyMessage).build();
+    }
+    
+    /**
+     * Get deleteAllTicketMachines
+     *
+     * http://localhost:8080/projectfacadeweb/rest/stationService/deleteAllTicketMachines
+    
+     *
+     * 
+     */ 
+    
+    @GET
+    @Path("/deleteAllTicketMachines")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response deleteAllTicketMachines() {
+        ReplyMessage replyMessage = new ReplyMessage();
+        //LOG.debug("/getMachineByStationName called  name=" + name);
+        ticketMachineDAO.deleteAll();
+        
+        //check and populate list in the reply message
+        List<TicketMachine> machines = ticketMachineDAO.findAll();
+        replyMessage.setCode(Response.Status.OK.getStatusCode());
+        replyMessage.setTicketMachineList(machines);
+        return Response.status(Response.Status.OK).entity(replyMessage).build();
+    }
+    
+    //generate ticketmachines
+    
+    /**
+     * Get generateTicketMachineForEachStation
+     *
+     * http://localhost:8080/projectfacadeweb/rest/stationService/generateTicketMachineForEachStation
+    
+     *
+     * 
+     */ 
+    @GET
+    @Path("/generateTicketMachineForEachStation")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response generateTicketMachineForEachStation(){
+        
+         //ServiceFacade serviceFacade = WebObjectFactory.getServiceFacade();
+         //TicketMachineDAO ticketMachineDAO = serviceFacade.getTicketMachineDAO();
+         StationDAO stationDAO = serviceFacade.getStationDAO();
+         List<TicketMachine> machines= new ArrayList<>();
+         List<Station> stationList= stationDAO.findAll();
+         
+        //generate random machines
+        
+        for(Station s: stationList){
+            Random rn = new Random();
+            for(Integer i = 0; i<rn.nextInt(10); i++){
+                TicketMachine t = new TicketMachine();
+                t.setStation(s);
+                t = ticketMachineDAO.save(t);
+                machines.add(t);
+            }
+            
+        }
+        
+        //check ticket machines match
+        for(TicketMachine dummy: machines){
+            String uuid = dummy.getUuid();
+            TicketMachine found = ticketMachineDAO.findByUuid(uuid);
+            System.out.println(dummy);
+        }
+        
+        ReplyMessage replyMessage = new ReplyMessage();
+        replyMessage.setCode(Response.Status.OK.getStatusCode());
+        replyMessage.setTicketMachineList(machines);
+        return Response.status(Response.Status.OK).entity(replyMessage).build();
+         
+    }
+    
+    
 
 }

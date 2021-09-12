@@ -1,5 +1,6 @@
 package org.solent.com528.project.model.dto;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -13,6 +14,16 @@ public class ReplyMessage {
     private String debugMessage;
 
     private TicketMachineConfig ticketMachineConfig;
+    
+    private List<TicketMachine> ticketMachineList;
+
+    public List<TicketMachine> getTicketMachineList() {
+        return ticketMachineList;
+    }
+
+    public void setTicketMachineList(List<TicketMachine> ticketMachineList) {
+        this.ticketMachineList = ticketMachineList;
+    }
 
     public Integer getCode() {
         return code;

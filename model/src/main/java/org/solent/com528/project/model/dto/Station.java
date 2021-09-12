@@ -1,5 +1,6 @@
 package org.solent.com528.project.model.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
@@ -82,6 +83,8 @@ public class Station {
     public void setTicketMachines(Set<TicketMachine> ticketMachines) {
         this.ticketMachines = ticketMachines;
     }
+    
+   
 
     @Override
     public String toString() {

@@ -211,21 +211,21 @@
         <%
             for (TicketMachine ticketMachine : ticketMachineList) {
         %>
-        <%= ticketMachine.getUuid()%>
+        <p>Ticket machine no <%= ticketMachine.getUuid()%> found in station <%=station.getName()%></p>
         <form action="./station.jsp" method="get">
-            <input type="text" size="36" name="ticketMachineUuid" value="<%= ticketMachine.getUuid()%>">
-            <input type="hidden" name="stationName" value="<%=station.getName()%>">
-            <input type="hidden" name="action" value="removeTicketMachine">
-            <button type="submit" >remove ticket machine from station</button>
-        </form>
-        <form action="./station.jsp" method="get">
-            <input type="text" size="36" name="updateticketMachineUuid" value="<%= ticketMachine.getUuid()%>">
-            <input type="number" size="36" name="ticketMachineId" value="<%= ticketMachine.getId()%>">
+            <input type="text" size="36" name="updateticketMachineUuid" value="<%= ticketMachine.getUuid()%>"><br>
+            <input type="number" size="36" name="ticketMachineId" value="<%= ticketMachine.getId()%>"><br>
             <input type="hidden" size="36" name="ticketMachineUuid" value="<%= ticketMachine.getUuid()%>">
             <input type="hidden" name="stationName" value="<%=station.getName()%>">
             <input type="hidden" name="action" value="updateTicketMachine">
             <button type="submit" >modify ticket machine</button>
-        </form> 
+        </form>
+        <form action="./station.jsp" method="get">
+            <input type="hidden" name="stationName" value="<%=station.getName()%>">
+            <input type="hidden" name="action" value="removeTicketMachine"><br>
+            <button type="submit" >remove ticket machine</button>
+        </form>
+         
         <%
             }
         %>

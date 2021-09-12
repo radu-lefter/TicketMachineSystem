@@ -20,6 +20,10 @@
     </properties>
 
     <dependencies>
+        
+        
+        
+        
 
         <!-- project dependencies -->
         <dependency>
@@ -130,6 +134,9 @@
             <artifactId>cglib-nodep</artifactId>
             <scope>compile</scope>
         </dependency>
+        
+        
+        
     </dependencies>
 
     <build>

@@ -26,7 +26,8 @@ public class TicketMachine {
     private String uuid = UUID.randomUUID().toString();
 
     private Station station;
-
+    
+ 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long getId() {
