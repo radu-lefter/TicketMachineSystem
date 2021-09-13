@@ -54,7 +54,7 @@ public class GateManagementServiceImpl implements GateManagementService {
         ticket.setValidTo(validTo);
         ticket.setStartStation(startStation);
 
-        String content = ticket.toString();
+        String content = ticket.getContent();
 
         try {
             AsymmetricCryptography ac = new AsymmetricCryptography();

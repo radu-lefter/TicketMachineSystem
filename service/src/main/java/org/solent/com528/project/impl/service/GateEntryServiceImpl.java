@@ -62,7 +62,7 @@ public class GateEntryServiceImpl implements GateEntryService {
             }
 
             // check if decoded string matches ticket content
-            return (ticket.toString().equals(decrypted_content));
+            return (ticket.getContent().equals(decrypted_content));
 
         } catch (Exception ex) {
             throw new RuntimeException("problem verifying ticket=" + ticket, ex);

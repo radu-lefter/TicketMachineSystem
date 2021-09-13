@@ -5,10 +5,12 @@
  */
 package org.solent.com528.project.model.dto;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Date;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,6 +48,10 @@ public class Ticket {
     @XmlElement(name = "validTo")
     @XmlJavaTypeAdapter(DateTimeAdapter.class)
     private Date validTo;
+    
+    public String getContent() {
+        return "Ticket{" + "zones=" + zones + ", startStation=" + startStation + ", validFrom=" + validFrom + ", validTo=" + validTo + '}';
+    }
     
 
     public String getStartStation() {
@@ -129,10 +135,24 @@ public class Ticket {
             throw new RuntimeException("problem marshalling ticket", ex);
         }
     }
+    
+    // un serialise ticket as xml 
+    public static Ticket fromXML(String ticketXML) {
+        try {
+            //  but allows for refactoring
+            JAXBContext jaxbContext = JAXBContext.newInstance("org.solent.com528.project.model.dto");
+            Unmarshaller jaxbUnMarshaller = jaxbContext.createUnmarshaller();
+            Ticket ticket = (Ticket) jaxbUnMarshaller.unmarshal(new StringReader(ticketXML));
+            return ticket;
+        } catch (Exception ex) {
+            throw new IllegalArgumentException("could not marshall to Ticket ticketXML=" + ticketXML);
+        }
+    }
 
     @Override
     public String toString() {
-        return "Ticket{" + "startStation=" + startStation + ", cost=" + cost + ", encryptedHash=" + encryptedHash + ", rate=" + rate + ", issueDate=" + issueDate + '}';
+        //return "Ticket{" + "startStation=" + startStation + ", cost=" + cost + ", encryptedHash=" + encryptedHash + ", rate=" + rate + ", issueDate=" + issueDate + '}';
+        return "Ticket{" + "zones=" + zones + ", startStation=" + startStation + ", encryptedHash=" + encryptedHash + ", validFrom=" + validFrom + ", validTo=" + validTo + '}';
     }
 
 

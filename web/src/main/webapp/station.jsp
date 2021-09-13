@@ -222,6 +222,7 @@
         </form>
         <form action="./station.jsp" method="get">
             <input type="hidden" name="stationName" value="<%=station.getName()%>">
+            <input type="hidden" name="ticketMachineUuid" value="<%= ticketMachine.getUuid()%>">
             <input type="hidden" name="action" value="removeTicketMachine"><br>
             <button type="submit" >remove ticket machine</button>
         </form>

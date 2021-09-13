@@ -5,6 +5,7 @@
 --%>
 
 
+<%@page import="java.util.ArrayList"%>
 <%@page import="com.google.gson.JsonArray"%>
 <%@page import="com.google.gson.JsonObject"%>
 <%@page import="com.google.gson.JsonElement"%>
@@ -30,6 +31,12 @@
 <%@page import="javax.xml.bind.Marshaller"%>
 
 <%
+    
+    String errorMessage = "";
+
+    GateManagementService gateManagementService = ServiceFactoryImpl.getGateManagementService();
+    // pull in standard date format
+    DateFormat df = new SimpleDateFormat(DateTimeAdapter.DATE_FORMAT);
        
     String startStationStr = request.getParameter("sStation");
     if (startStationStr == null || startStationStr.isEmpty()) {
@@ -48,6 +55,17 @@
     String[] parts2 = destStationStr.split("-");
     String dstSt = parts2[0];
     String dstZn = parts2[1];
+    
+    String validFromStr = request.getParameter("validFrom");
+    if (validFromStr == null || validFromStr.isEmpty()) {
+        validFromStr = df.format(new Date());
+    }
+
+    String validToStr = request.getParameter("validTo");
+    // valid to initialised to date plus one day
+    if (validToStr == null || validToStr.isEmpty()) {
+        validToStr = df.format(new Date(new Date().getTime() + 1000 * 60 * 60 * 24));
+    }
     
     
     String rStart = strSt.replaceAll(" ", "+");
@@ -95,32 +113,63 @@
        //System.out.println(buffer);
       JsonObject jobj1 = new Gson().fromJson(buffer1, JsonObject.class);
 
-      //String result = jobj.get("ticketMachineConfig").toString();
+      //getting values for the peak/offpeak prices
       JsonObject tconf1 = jobj1.getAsJsonObject("ticketMachineConfig");
       JsonObject price1 = tconf1.getAsJsonObject("pricingDetails");
-      String result1 = price1.get("peakPricePerZone").toString();
+      String peakPPZ = price1.get("peakPricePerZone").toString();
+      String offpeakPPZ = price1.get("offpeakPricePerZone").toString();
+      
+      //getting price bands
+      ArrayList<Integer> bands = new ArrayList<Integer>(); ;
+      JsonArray pBand = price1.getAsJsonArray("priceBand");
+      int size = pBand.size();
+      for(int i =0; i< size; i++){
+      
+      JsonElement pbObj1 = pBand.get(i);
+      JsonObject pbFirst = pbObj1.getAsJsonObject();
+      int pb1 = Integer.parseInt(pbFirst.get("hour").toString());
+
+      bands.add(pb1);
+      
+    }
+    
+    //getting purchasing hour
+      int purchased = Integer.parseInt(validFromStr.substring(11, 13));
+      
+   
+      
+      
+      //getting zone difference
+      int strZnInt = Integer.parseInt(strZn);
+      int dstZnInt = Integer.parseInt(dstZn);
+      int znDiff = Math.abs(strZnInt-dstZnInt);
+      
+      
+      //calculating the price
+      double price = 0;
+      if(purchased > bands.get(0) && purchased < bands.get(1)){
+      price = Double.parseDouble(offpeakPPZ) * znDiff;
+    }else if (purchased > bands.get(1) && purchased < bands.get(2)){
+      price = Double.parseDouble(peakPPZ) * znDiff;
+    } else if(purchased > bands.get(2)){
+      price = Double.parseDouble(offpeakPPZ) * znDiff;
+    }
+      
+      
+      /*
+      {"code":200,"debugMessage":null,
+      "ticketMachineConfig":{"uuid":"32e64507-2ef6-44e1-9651-511d49b5bbc6","stationName":"Aldgate","stationZone":3,
+      "pricingDetails":{"peakPricePerZone":5.0,"offpeakPricePerZone":2.5,
+      "priceBand":[{"hour":0,"minutes":0,"rate":"OFFPEAK"},
+      {"hour":9,"minutes":0,"rate":"PEAK"},
+      {"hour":11,"minutes":30,"rate":"OFFPEAK"}]},
+      "station":null},"ticketMachineList":null}
+      */
 
    
     
-    String errorMessage = "";
-
-    GateManagementService gateManagementService = ServiceFactoryImpl.getGateManagementService();
-    // pull in standard date format
-    DateFormat df = new SimpleDateFormat(DateTimeAdapter.DATE_FORMAT);
-
-    String validFromStr = request.getParameter("validFrom");
-    if (validFromStr == null || validFromStr.isEmpty()) {
-        validFromStr = df.format(new Date());
-    }
-
-    String validToStr = request.getParameter("validTo");
-    // valid to initialised to date plus one day
-    if (validToStr == null || validToStr.isEmpty()) {
-        validToStr = df.format(new Date(new Date().getTime() + 1000 * 60 * 60 * 24));
-    }
     
-    
-    
+
     
 
     String ticketStr = "";
@@ -175,14 +224,21 @@
                     <td><input type="text" name="validTo" value="<%=validToStr%>"></td>
                 </tr>
                 <tr>
-                    <td>Peak price</td>
-                    <td><%=result1%></td>
+                    <td>Ticket price</td>
+                    <td><%=price%></td>
                 </tr>
+                <tr>
+                    <td>Ticket price</td>
+                    <td><%=purchased%></td>
+                </tr>
+         
             </table>
             <button type="submit" >Create Ticket</button>
         </form> 
         <h1>generated ticket xml</h1>
         <textarea id="ticketTextArea" rows="10" cols="120"><%=ticketStr%></textarea>
+        
+        <p><a href="../projectfacadeweb-client/openGate.jsp" target="_blank">Test your ticket at the gate</a></p>
 
     </body>
 </html>
