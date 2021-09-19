@@ -1,0 +1,7 @@
+org\solent\com528\project\impl\service\ServiceObjectFactoryJpaImpl.class
+org\solent\com528\project\impl\service\GateEntryServiceImpl.class
+org\solent\com528\project\impl\service\GateManagementService.class
+org\solent\com528\project\impl\service\ServiceFactoryImpl.class
+org\solent\com528\project\impl\service\ServiceFacadeImpl.class
+org\solent\com528\project\impl\service\GateManagementServiceImpl.class
+org\solent\com528\project\impl\service\GateEntryService.class

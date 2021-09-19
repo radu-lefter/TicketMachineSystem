@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pricingDetails>
+<peakPricePerZone>10.0</peakPricePerZone>
+<offpeakPricePerZone>5.5</offpeakPricePerZone>
+<priceBandList>
+<priceBand>
+<hour>0</hour>
+<minutes>0</minutes>
+<rate>OFFPEAK</rate>
+</priceBand>
+<priceBand>
+<hour>8</hour>
+<minutes>0</minutes>
+<rate>PEAK</rate>
+</priceBand>
+<priceBand>
+<hour>12</hour>
+<minutes>30</minutes>
+<rate>OFFPEAK</rate>
+</priceBand>
+</priceBandList>
+</pricingDetails>

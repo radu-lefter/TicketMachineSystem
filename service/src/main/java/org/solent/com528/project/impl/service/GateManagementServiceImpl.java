@@ -33,6 +33,8 @@ public class GateManagementServiceImpl implements GateManagementService {
                 + " validFrom="+validFrom
                 + " validTo="+validTo
                 + " startStation"+startStation
+               
+                
                 + ")");
                 
         if (zones == null) {
@@ -47,12 +49,15 @@ public class GateManagementServiceImpl implements GateManagementService {
         if (startStation == null) {
             throw new RuntimeException("startStation must not be null");
         }
+       
 
         Ticket ticket = new Ticket();
         ticket.setZones(zones);
         ticket.setValidFrom(validFrom);
         ticket.setValidTo(validTo);
         ticket.setStartStation(startStation);
+        //ticket.setDestinationStation(destinationStation);
+        //ticket.setCost(cost);
 
         String content = ticket.getContent();
 

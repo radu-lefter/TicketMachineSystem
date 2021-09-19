@@ -30,6 +30,8 @@ public class Ticket {
     private String zones;
 
     private String startStation;
+    
+    private String destinationStation;
 
     private Double cost;
 
@@ -60,6 +62,14 @@ public class Ticket {
 
     public void setStartStation(String startStation) {
         this.startStation = startStation;
+    }
+    
+    public String getDestinationStation() {
+        return destinationStation;
+    }
+
+    public void setDestinationStation(String destinationStation) {
+        this.destinationStation = destinationStation;
     }
 
     public Double getCost() {
